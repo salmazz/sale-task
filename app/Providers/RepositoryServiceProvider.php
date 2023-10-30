@@ -5,6 +5,8 @@ namespace App\Providers;
 use App\Models\User;
 use App\Repositories\Customer\CustomerRepository;
 use App\Repositories\Customer\Eloquent\CustomerRepositoryEloquent;
+use App\Repositories\Invoice\Eloquent\InvoiceRepositoryEloquent;
+use App\Repositories\Invoice\InvoiceRepository;
 use App\Repositories\Menu\Eloquent\MealRepositoryEloquent;
 use App\Repositories\Menu\MealRepository;
 use App\Repositories\Order\Eloquent\OrderRepositoryEloquent;
@@ -66,5 +68,10 @@ class RepositoryServiceProvider extends ServiceProvider
         // Meal Repository
         $this->app->bind(OrderDetailRepository::class,
             OrderDetailRepositoryEloquent::class);
+
+
+        // Invoice Repository
+        $this->app->bind(InvoiceRepository::class,
+            InvoiceRepositoryEloquent::class);
     }
 }

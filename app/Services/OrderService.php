@@ -4,7 +4,7 @@ namespace App\Services;
 
 use App\Events\DecreaseAmountMealEveryOrder;
 use App\Http\Resources\Order\OrderResource;
-use App\Repositories\Customer\CustomerRepository;
+use App\Repositories\Customer\InvoiceRepository;
 use App\Repositories\Menu\MealRepository;
 use App\Repositories\Order\OrderRepository;
 use App\Repositories\OrderDetail\OrderDetailRepository;
@@ -15,7 +15,7 @@ use Symfony\Component\HttpFoundation\Response;
 class OrderService
 {
     protected OrderRepository $orderRepository;
-    protected CustomerRepository $customerRepository;
+    protected InvoiceRepository $customerRepository;
     protected UserRepository $userRepository;
     protected TableRepository $tableRepository;
     protected MealRepository $mealRepository;
@@ -23,7 +23,7 @@ class OrderService
 
 
     public function __construct(OrderRepository $orderRepository,
-                                TableRepository $tableRepository, CustomerRepository $customerRepository,
+                                TableRepository $tableRepository, InvoiceRepository $customerRepository,
                                 UserRepository  $userRepository, MealRepository $mealRepository, OrderDetailRepository $orderDetailRepository)
     {
         $this->orderRepository = $orderRepository;

@@ -33,8 +33,6 @@ class TableServiceTest extends TestCase
         $this->table = Table::factory()->create();
         $this->meal = \App\Models\Meal::factory()->create();
         $this->reservation = \App\Models\Reservation::factory()->create();
-        $this->order = \App\Models\Order::factory()->create();
-        $this->orderDetail = \App\Models\OrderDetail::factory()->create();
     }
 
     public function testCheckAvailability()

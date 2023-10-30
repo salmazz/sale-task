@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Repositories\Customer\Eloquent;
+namespace App\Repositories\Invoice\Eloquent;
 
-use App\Models\Customer;
-use App\Repositories\Customer\CustomerRepository;
+use App\Models\Invoice;
+use App\Repositories\Invoice\InvoiceRepository;
 use Prettus\Repository\Eloquent\BaseRepository;
 use Prettus\Repository\Criteria\RequestCriteria;
 
@@ -12,7 +12,7 @@ use Prettus\Repository\Criteria\RequestCriteria;
  *
  * @package namespace App\Repositories;
  */
-class CustomerRepositoryEloquent extends BaseRepository implements CustomerRepository
+class InvoiceRepositoryEloquent extends BaseRepository implements InvoiceRepository
 {
     /**
      * Specify Model class name
@@ -21,7 +21,7 @@ class CustomerRepositoryEloquent extends BaseRepository implements CustomerRepos
      */
     public function model()
     {
-        return Customer::class;
+        return Invoice::class;
     }
 
     /**

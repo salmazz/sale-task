@@ -12,7 +12,6 @@
     - [5. Pay](#5-pay)
 - [Design Patterns](#design-patterns)
 - [Bonus Features](#bonus-features)
-- [Testing](#testing)
 - [Docker](#docker)
 - [Authentication](#authentication)
 - [Postman Collection](#postman-collection)
@@ -31,6 +30,8 @@ This project provides a set of APIs for managing a mini restaurant reservation s
 - `reservations`: id, table_id, customer_id, from_time, to_time
 - `orders`: id, table_id, reservation_id, customer_id, user_id (waiter), total, paid, date
 - `order_details`: id, order_id, meal_id, amount_to_pay
+- `invoices` : id,user_id , order_id , customer_id , total
+- `waiting_list`: id,customer_id, capacity,to_time, from_time
 
 ## API Endpoints
 
@@ -79,13 +80,20 @@ Using Strategy Pattern to handle the different ways of calculating the checkout 
 
 ## Authentication
 
-Make Authentication With Sanctum
+Authentication With Sanctum
 
 ## Postman Collection
 
 To facilitate testing and integration, provide a Postman collection that includes sample requests for each API endpoint, along with expected responses. This will help users understand how to interact with your API.
 
-[Link to Postman Collection](#) - Update this link once you create the collection.
+[Link to Postman Collection](https://elements.getpostman.com/redirect?entityId=6208228-a1f8d459-d304-4e5a-a680-5b390f73b97f&entityType=collection) - Update this link once you create the collection.
+
+Please Add in Sale Env
+
+- app_url: with your app link 
+- token :when make login
+- In Every Api Body have example about request
+
 
 ## Getting Started
 
@@ -113,18 +121,8 @@ run  ./vendor/bin/sail up -d to setup environment by docker
 ./vendor/bin/sail up -d
 ```
 
-# Laravel sail
-run  ./vendor/bin/sail up -d to setup environment by docker
-```
-./vendor/bin/sail up -d
-```
-
 ## Run Migrations
 ```bash
  ./vendor/bin/sail artisan migrate --seed
  ````
-## Testing
 
-```
-./vendor/bin/sail artisan test
-````

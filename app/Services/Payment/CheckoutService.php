@@ -2,53 +2,82 @@
 
 namespace App\Services\Payment;
 
+use App\Repositories\Invoice\InvoiceRepository;
 use App\Repositories\Order\OrderRepository;
+use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
 
 class CheckoutService
 {
     protected OrderRepository $orderRepository;
+    protected InvoiceRepository $invoiceRepository;
     protected TaxesAndServiceStrategyService $taxesAndServiceStrategyService;
     protected ServiceChargeOnlyStrategyService $chargeOnlyStrategyService;
 
-    public function __construct(OrderRepository $orderRepository, TaxesAndServiceStrategyService $taxesAndServiceStrategyService, ServiceChargeOnlyStrategyService $chargeOnlyStrategyService)
+    public function __construct(OrderRepository $orderRepository, TaxesAndServiceStrategyService $taxesAndServiceStrategyService, ServiceChargeOnlyStrategyService $chargeOnlyStrategyService, InvoiceRepository $invoiceRepository)
     {
         $this->orderRepository = $orderRepository;
+        $this->invoiceRepository = $invoiceRepository;
         $this->taxesAndServiceStrategyService = $taxesAndServiceStrategyService;
         $this->chargeOnlyStrategyService = $chargeOnlyStrategyService;
+
     }
 
-    /**
-     * @param $request
-     * @return array
-     */
     public function pay($request)
     {
         $order = $this->orderRepository->find($request['order_id']);
 
         if (!$order) {
-            return [
-                'message' => 'Order not found.',
-                'data' => [],
-                'code' => Response::HTTP_NOT_FOUND
-            ];
+            return $this->getResponse('Order not found', Response::HTTP_NOT_FOUND);
         }
 
-        $total = $order->total; // Calculate the total based on order details
-
-        // TODO Edit this with enum
-        if ($request['checkout_option'] == 1) {
-           $total = $this->taxesAndServiceStrategyService->calculateTotal($total);
-        } elseif ($request['checkout_option'] == 2) {
-           $total =  $this->chargeOnlyStrategyService->calculateTotal($total);
+        if ($order->isPaid()) {
+            return $this->getResponse('Order is already paid', Response::HTTP_OK, ['total' => number_format($order->total, 2)]);
         }
 
-        $order->update(['paid' => 1, 'total' => $total]);
+        $total = $this->calculateTotal($order, $request['checkout_option']);
 
+        $invoice = $this->createInvoice($order, $total);
+
+        $this->updateOrderAndMarkPaid($order, $invoice->total);
+
+        return $this->getResponse('Checkout Done successfully', Response::HTTP_OK, ['total' => $total]);
+    }
+
+    private function getResponse($message, $code, $data = [])
+    {
         return [
-            'message' => 'Checkout Done successfully.',
-            'data' => ['total' => $total], // Wrap $total in an array
-            'code' => Response::HTTP_OK
+            'message' => $message,
+            'data' => $data,
+            'code' => $code,
         ];
+    }
+
+    private function calculateTotal($order, $checkoutOption)
+    {
+        $total = number_format($order->total, 2);
+
+        if ($checkoutOption == 1) {
+            return $this->taxesAndServiceStrategyService->calculateTotal($total);
+        } elseif ($checkoutOption == 2) {
+            return $this->chargeOnlyStrategyService->calculateTotal($total);
+        }
+
+        return $total;
+    }
+
+    private function createInvoice($order, $total)
+    {
+        return $this->invoiceRepository->firstOrCreate([
+            'order_id' => $order->id,
+            'user_id' => Auth::user()->id,
+            'customer_id' => $order->customer_id,
+            'total' => $total
+        ]);
+    }
+
+    private function updateOrderAndMarkPaid($order, $total)
+    {
+        $order->update(['paid' => 1, 'total' => $total]);
     }
 }

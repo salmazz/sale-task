@@ -18,7 +18,6 @@ class ReservationService
 
     public function createReservation($request)
     {
-
         $existingReservation = $this->reservationRepository->scopeIsTableAvailableDuring($request['table_id'], $request['from_time'], $request['to_time']);
 
         if ($existingReservation) {
@@ -40,9 +39,7 @@ class ReservationService
                 'code' => Response::HTTP_OK
             ];
         } catch (\Exception $e) {
-
             DB::rollBack();
-
 
             return [
                 'message' => 'Transaction failed. Rollback performed.',
