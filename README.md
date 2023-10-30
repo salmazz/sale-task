@@ -35,11 +35,38 @@ This project provides a set of APIs for managing a mini restaurant reservation s
 
 ## API Endpoints
 
+## Path Table
+
+| Method | Path                     | Description        |
+|--------|--------------------------|--------------------|
+| POST   | /api/check-availability  | Check Availability |
+| POST   | /api/reserve-table/      | Reserve Table      |
+| GET    | /api/list-menu-items/    | List Menu Item     |
+| POST   | /api/place-order/        | Place Order        |
+| POST   | /api/pay/                | Pay                |
+
+
 ### 1. Check Availability
 
 Endpoint: `/api/check-availability`
 
 Description: Check if a table is available during a certain datetime for a given number of guests.
+
+**Headers:**
+- Content-Type: "application/json"
+- Accept: "application/json"
+- Authorization: "Bearer {{token}}"
+
+**Request Body:**
+```json
+{
+  "from_time": "2023-10-02 00:00:00",
+  "to_time" : "2023-11-01 00:00:00",
+  "capacity" : 2,
+  "waiting_list": true,
+  "customer_id" :1
+}
+```
 
 ### 2. Reserve Table
 
@@ -47,17 +74,64 @@ Endpoint: `/api/reserve-table`
 
 Description: Reserve a table for a customer.
 
+
+**Headers:**
+- Content-Type: "application/json"
+- Accept: "application/json"
+- Authorization: "Bearer {{token}}"
+
+**Request Body:**
+```json
+{
+  "table_id": 2,
+  "customer_id": 2,
+  "from_time": "2023-10-02 00:00:00",
+  "to_time": "2023-11-01 00:00:00"
+}
+```
+
 ### 3. List Menu Items
 
 Endpoint: `/api/list-menu-items`
 
 Description: List all items in the menu. The system will ensure that each meal is served a limited number of times per day.
 
+
+**Headers:**
+- Content-Type: "application/json"
+- Accept: "application/json"
+- Authorization: "Bearer {{token}}"
+
 ### 4. Place Order
 
 Endpoint: `/api/place-order`
 
 Description: Place an order for a table, applying all discounts for each meal.
+
+**Headers:**
+- Content-Type: "application/json"
+- Accept: "application/json"
+- Authorization: "Bearer {{token}}"
+
+**Request Body:**
+```json
+{
+  "table_id": 1,
+  "customer_id": 2,
+  "user_id": 1,
+  "reservation_id": 4,
+  "order_items": [
+    {
+      "meal_id": 20,
+      "quantity": 2
+    },
+    {
+      "meal_id": 19,
+      "quantity": 1
+    }
+  ]
+}
+```
 
 ### 5. Pay
 
@@ -67,6 +141,18 @@ Description: Checkout and print an invoice for a table. Two ways of handling che
 1. Add 14% taxes and 20% service charge.
 2. Add a 15% service charge only.
 
+**Headers:**
+- Content-Type: "application/json"
+- Accept: "application/json"
+- Authorization: "Bearer {{token}}"
+
+**Request Body:**
+```json
+{
+  "order_id" : 26,
+  "checkout_option":2
+}
+```
 ## Design Patterns
 
 Using Strategy Pattern to handle the different ways of calculating the checkout total (with taxes and service charges).
@@ -94,6 +180,10 @@ Please Add in Sale Env
 - token :when make login
 - In Every Api Body have example about request
 
+
+# Requirements
+- PHP 8.2
+- MySQL
 
 ## Getting Started
 
